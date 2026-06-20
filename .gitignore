@@ -1,0 +1,6 @@
+Website/frontend/dist/
+Website/frontend/node_modules/
+Website/node_modules/
+
+code/saved_model/
+code/output/    

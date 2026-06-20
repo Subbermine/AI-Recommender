@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  --color-brand-navy: #0A2947;
+  --color-brand-cream: #F3E4C9;
+  --color-brand-sage: #D3D4C0;
+  --color-brand-brown: #8B5E3C;
+  
+  /* Mapping for legacy classes if needed, but better to use these directly */
+  --color-brand-indigo: #8B5E3C; /* Using brown as the new action color */
+  --color-brand-indigo-light: #D3D4C0;
+  --color-brand-indigo-dark: #0A2947;
+  --color-brand-dark: #0A2947;
+  --color-brand-dark-surface: #D3D4C0;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-brand-cream text-brand-navy font-normal leading-relaxed antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-brand-navy font-extrabold tracking-tight;
+  }
+}
+
+/* Legibility Utilities */
+.text-tag {
+  @apply text-xs font-bold uppercase tracking-widest;
+}
+
+.text-secondary {
+  @apply text-brand-navy/80 font-medium;
+}
+
+.text-secondary-dark {
+  @apply text-brand-cream/80 font-medium;
+}
+
+/* Glassmorphism utility */
+.glass {
+  @apply bg-brand-cream/70 backdrop-blur-md border border-brand-sage/20;
+}
+
+/* Premium Shadows */
+.shadow-premium {
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 4px 10px -2px rgba(0, 0, 0, 0.02);
+}
+
+.shadow-premium-hover {
+  @apply transition-shadow duration-300;
+}
+
+.shadow-premium-hover:hover {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Skeleton Loading Shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f3e4c9 25%, #d3d4c0 50%, #f3e4c9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Advanced Button Base */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 bg-brand-brown hover:bg-brand-navy text-brand-cream font-bold px-6 py-3 rounded-xl shadow-lg shadow-brand-brown/20 active:scale-95 transition-all duration-200;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 bg-brand-cream hover:bg-brand-cream/50 text-brand-navy font-bold px-6 py-3 rounded-xl border border-brand-sage shadow-sm active:scale-95 transition-all duration-200;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-brand-cream;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-brand-sage rounded-full border-2 border-brand-cream hover:bg-brand-sage/80;
+}
+

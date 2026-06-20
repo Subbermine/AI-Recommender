@@ -1,0 +1,37 @@
+Artificial intelligence driven self-configuring digital commerce model 
+--for enhanced consumer behavior prediction and personalization
+
+
+world e-commerce sales fast changing consumer behavior. 
+
+autonomously adjusts recommendation rules, pricing, and user interface content 
+
+The proposed system utilizes the large language models (LLM) such as DeBERTaV3, RoBERTa, and XLNet 
+--to derive semantic and sentiment-conscious features of user-generated text. 
+
+feature selection 
+an enhanced seeker optimization (ESO) algorithm,
+--more efficient and less complex 
+quantum polynomial neural network (QPNN). 
+--consumer buying behavior
+
+datasets, 
+i.e. Women e-commerce clothing reviews, 
+https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews
+Flipkart product reviews, and 
+https://www.kaggle.com/datasets/niraliivaghani/flipkart-product-customer-reviews-dataset
+Amazon product reviews, 
+https://www.kaggle.com/datasets/yasserh/amazon-product-reviews-dataset
+
+accuracy of 96.8%, 
+precision of 95.9%, 
+Recall of 96.3% and 
+F1-score of 96.1%
+
+user engagement by 21% 
+conversion rates by 18% and 
+
+Keywords: consumer behavior prediction, adaptive personalization, sentiment analysis, feature optimization, intelligent commerce systems
+
+
+https://www.kaggle.com/datasets/umuttuygurr/e-commerce-customer-behavior-and-sales-analysis-tr/data

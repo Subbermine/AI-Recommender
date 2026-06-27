@@ -1,0 +1,14 @@
+Django==5.2.15
+djangorestframework
+django-cors-headers
+PyJWT
+numpy
+textblob
+# Use the CPU-only PyTorch build on Windows devices without a compatible CUDA setup
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.0.1+cpu
+transformers==4.51.3
+tokenizers>=0.21,<0.22
+sentencepiece
+pandas
+scikit-learn

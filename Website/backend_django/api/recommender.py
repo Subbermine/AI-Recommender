@@ -38,34 +38,33 @@ class Recommender:
 
     def get_embedding(self, product):
         """
-        Computes combined DeBERTa embedding + sentiment polarity/subjectivity
-        feature vector for a single product based on its title and description.
-        Returns a numpy array of shape (770,).
+        Computes DeBERTa embedding by weighing the Title (80%) and Description (20%).
+        Returns a numpy array of shape (768,).
         """
         if product.id in self.embeddings_cache:
             return self.embeddings_cache[product.id]
 
         self._lazy_load_model()
-        text = f"{product.title} {product.description}"
         
-        # Tokenize and run forward pass
-        inputs = self.tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=128)
+        # 1. Embed the Title
+        title_text = str(product.title) if product.title else ""
+        title_inputs = self.tokenizer(title_text, return_tensors="pt", truncation=True, padding=True, max_length=64)
         with torch.no_grad():
-            outputs = self.model(**inputs)
+            title_outputs = self.model(**title_inputs)
+        title_embed = title_outputs.last_hidden_state.mean(dim=1).squeeze().numpy()
         
-        # Extract mean pooled embedding (768,)
-        embed = outputs.last_hidden_state.mean(dim=1).squeeze().numpy()
+        # 2. Embed the Description
+        desc_text = str(product.description) if product.description else ""
+        desc_inputs = self.tokenizer(desc_text, return_tensors="pt", truncation=True, padding=True, max_length=128)
+        with torch.no_grad():
+            desc_outputs = self.model(**desc_inputs)
+        desc_embed = desc_outputs.last_hidden_state.mean(dim=1).squeeze().numpy()
         
-        # Extract polarity & subjectivity of description (2,)
-        sentiment = TextBlob(product.description)
-        polarity = sentiment.polarity
-        subjectivity = sentiment.subjectivity
+        # 3. Weighted Combination (80% Title, 20% Description)
+        weighted_embed = (0.8 * title_embed) + (0.2 * desc_embed)
         
-        # Combine to (770,)
-        combined = np.hstack((embed, [polarity, subjectivity]))
-        
-        self.embeddings_cache[product.id] = combined
-        return combined
+        self.embeddings_cache[product.id] = weighted_embed
+        return weighted_embed
 
     def precompute_all(self):
         """Precomputes embeddings for all products in the database."""
@@ -74,59 +73,61 @@ class Recommender:
             self.get_embedding(prod)
 
     def recommend_similar(self, product, limit=4):
-        """
-        Recommends products similar to the given product using cosine similarity
-        on the precomputed DeBERTa embeddings.
-        """
         target_embed = self.get_embedding(product)
         all_products = Product.objects.exclude(id=product.id)
         
+        import re
+        target_words = set(re.findall(r'\w+', str(product.title).lower()))
+        stopwords = {"the", "and", "a", "an", "is", "with", "for", "to", "in", "of", "on", "pack", "set", "size", "color", "cm", "inch", "mm", "ml", "kg"}
+        target_keywords = target_words - stopwords
+
         scores = []
         for prod in all_products:
             embed = self.get_embedding(prod)
-            # Calculate cosine similarity
             norm_target = np.linalg.norm(target_embed)
             norm_embed = np.linalg.norm(embed)
             if norm_target > 0 and norm_embed > 0:
                 sim = np.dot(target_embed, embed) / (norm_target * norm_embed)
             else:
                 sim = 0.0
+                
+            prod_words = set(re.findall(r'\w+', str(prod.title).lower()))
+            prod_keywords = prod_words - stopwords
+            shared_words = target_keywords & prod_keywords
+            
+            if len(shared_words) > 0:
+                sim += 0.3 * min(len(shared_words), 3)
+                
             scores.append((prod, sim))
             
-        # Sort descending by similarity
         scores.sort(key=lambda x: x[1], reverse=True)
         return [item[0] for item in scores[:limit]]
 
     def recommend_for_user(self, user, limit=8):
-        """
-        Recommends products based on user interests (wishlist, order items, or reviews).
-        If no user history exists, falls back to the top products ranked by AI weightage score.
-        """
-        # Collect products user has interacted with
         interacted_product_ids = set()
         
-        # 1. Wishlist
         wishlist_ids = user.wishlist.values_list('id', flat=True)
         interacted_product_ids.update(wishlist_ids)
         
-        # 2. Ordered products
         ordered_ids = OrderItem.objects.filter(order__user=user).values_list('product_id', flat=True)
         interacted_product_ids.update(ordered_ids)
         
-        # 3. Reviewed products
         reviewed_ids = Review.objects.filter(user=user).values_list('product_id', flat=True)
         interacted_product_ids.update(reviewed_ids)
         
-        # Fallback if no user history or user is Anonymous
         if not interacted_product_ids:
             return self.get_fallback_recommendations(limit)
             
-        # Compute user interest profile vector as the mean embedding of all interacted products
         interacted_products = Product.objects.filter(id__in=interacted_product_ids)
         user_vectors = [self.get_embedding(p) for p in interacted_products]
         user_profile = np.mean(user_vectors, axis=0)
         
-        # Find similar products that the user has NOT interacted with
+        import re
+        stopwords = {"the", "and", "a", "an", "is", "with", "for", "to", "in", "of", "on", "pack", "set", "size", "color", "cm", "inch", "mm", "ml", "kg"}
+        user_keywords = set()
+        for p in interacted_products:
+            user_keywords.update(set(re.findall(r'\w+', str(p.title).lower())) - stopwords)
+
         candidate_products = Product.objects.exclude(id__in=interacted_product_ids)
         scores = []
         for prod in candidate_products:
@@ -137,6 +138,14 @@ class Recommender:
                 sim = np.dot(user_profile, embed) / (norm_user * norm_embed)
             else:
                 sim = 0.0
+                
+            prod_words = set(re.findall(r'\w+', str(prod.title).lower()))
+            prod_keywords = prod_words - stopwords
+            shared_words = user_keywords & prod_keywords
+            
+            if len(shared_words) > 0:
+                sim += 0.2 * min(len(shared_words), 4)
+                
             scores.append((prod, sim))
             
         scores.sort(key=lambda x: x[1], reverse=True)

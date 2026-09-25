@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERVE | Product Details</title>
+    <meta name="description" content="View product specifications, customer reviews, and order online at VERVE Store.">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+    <!-- Announcement Top Bar -->
+    <div class="announcement-bar">
+        <span>✨ Free Worldwide Shipping on Orders Over $75 | 30-Day Complimentary Returns</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="brand">
+                <span class="brand-logo">VERVE</span>
+                <span class="brand-sub">EST. 2026</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">All Items</a></li>
+                <li><a href="/#catalog" class="nav-link">Women's Apparel</a></li>
+                <li><a href="/#catalog" class="nav-link">Electronics</a></li>
+                <li><a href="/#catalog" class="nav-link">Recommended</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <div class="search-wrapper">
+                    <input type="text" id="search-input" class="search-input" placeholder="Search catalog...">
+                    <span class="search-btn">🔍</span>
+                </div>
+                
+                <button class="icon-btn" id="cart-btn" onclick="toggleCartDrawer()">
+                    <span>🛒</span>
+                    <span id="cart-count" class="cart-badge">2</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Product Detail Container -->
+    <main class="store-container">
+        
+        <!-- Breadcrumbs Navigation -->
+        <nav class="breadcrumbs">
+            <a href="/">Home</a> &rsaquo; 
+            <a href="/#catalog" id="breadcrumb-category">Catalog</a> &rsaquo; 
+            <span id="breadcrumb-title" class="breadcrumb-current">Product Name</span>
+        </nav>
+
+        <!-- Product Main Grid Section -->
+        <section id="pdp-container" class="pdp-standalone-grid">
+            <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 5rem 0;">
+                Loading product specifications...
+            </div>
+        </section>
+
+        <!-- Related Recommended Products Section -->
+        <section class="related-section">
+            <div class="store-header">
+                <div>
+                    <h3 class="store-title" style="font-size: 1.5rem;">Recommended For You</h3>
+                    <p class="store-subtitle">Similar items curated based on your selection.</p>
+                </div>
+            </div>
+            
+            <div id="related-grid" class="products-grid">
+                <!-- Populated dynamically with category-matched products -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Shopping Cart Drawer Modal -->
+    <div id="cart-drawer" class="cart-overlay">
+        <div class="cart-modal">
+            <div class="cart-header">
+                <h3>Shopping Bag (<span id="cart-drawer-count">2</span>)</h3>
+                <button class="close-btn" onclick="toggleCartDrawer()">&times;</button>
+            </div>
+            <div id="cart-items" class="cart-items-list">
+                <!-- Cart items populated via JS -->
+            </div>
+            <div class="cart-footer">
+                <div class="cart-subtotal">
+                    <span>Subtotal:</span>
+                    <span id="cart-total-price" class="total-price">$148.50</span>
+                </div>
+                <button class="btn-checkout" onclick="alert('Proceeding to Secure Checkout...')">Checkout Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Store Footer -->
+    <footer class="store-footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <div class="footer-brand">VERVE</div>
+                <p>Premium lifestyle e-commerce store delivering quality apparel and tech to your doorstep.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop Categories</h4>
+                <ul>
+                    <li><a href="/">Women's Clothing</a></li>
+                    <li><a href="/">Smart Electronics</a></li>
+                    <li><a href="/">New Arrivals</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Customer Care</h4>
+                <ul>
+                    <li><a href="#">Order Tracking</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Returns & Exchanges</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 VERVE Retail Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/static/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initProductPage();
+        });
+    </script>
+</body>
+</html>

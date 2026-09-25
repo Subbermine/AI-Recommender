@@ -1,5 +1,18 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
+
+# Set adult executive plot styling
+plt.style.use('dark_background')
+plt.rcParams['font.family'] = 'sans-serif'
+plt.rcParams['axes.edgecolor'] = '#334155'
+plt.rcParams['axes.facecolor'] = '#0f172a'
+plt.rcParams['figure.facecolor'] = '#0b0f19'
+plt.rcParams['grid.color'] = '#1e293b'
+plt.rcParams['text.color'] = '#f8fafc'
+plt.rcParams['axes.labelcolor'] = '#94a3b8'
+plt.rcParams['xtick.color'] = '#94a3b8'
+plt.rcParams['ytick.color'] = '#94a3b8'
 
 # Models
 models = ['DeBERTaV3', 'RoBERTa', 'XLNet', 'Proposed']
@@ -21,9 +34,9 @@ width = 0.25
 # ------------------ FIGURE 1 ------------------
 plt.figure(figsize=(7, 4))
 
-plt.bar(x - width, accuracy, width, label='Accuracy')
-plt.bar(x, precision, width, label='Precision')
-plt.bar(x + width, recall, width, label='Recall')
+plt.bar(x - width, accuracy, width, label='Accuracy', color='#c5a059')
+plt.bar(x, precision, width, label='Precision', color='#3b82f6')
+plt.bar(x + width, recall, width, label='Recall', color='#0d9488')
 
 plt.xticks(x, models)
 plt.ylabel('Performance')

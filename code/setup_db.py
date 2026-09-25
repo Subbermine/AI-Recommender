@@ -31,6 +31,11 @@ def create_tables(cursor):
             FOREIGN KEY(asin) REFERENCES products(asin)
         )
     ''')
+    
+    cursor.execute('''
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_reviews 
+        ON reviews (asin, COALESCE(user_id, ''), COALESCE(timestamp, 0), COALESCE(text, ''))
+    ''')
 
 def populate_from_jsonl(cursor, filepath, category, max_records):
     print(f"Populating from {filepath} (Category: {category})...")
@@ -55,9 +60,9 @@ def populate_from_jsonl(cursor, filepath, category, max_records):
                     VALUES (?, ?)
                 ''', (asin, category))
                 
-                # Insert review
+                # Insert review (ignore duplicates)
                 cursor.execute('''
-                    INSERT INTO reviews (asin, rating, title, text, user_id, timestamp, helpful_vote, verified_purchase)
+                    INSERT OR IGNORE INTO reviews (asin, rating, title, text, user_id, timestamp, helpful_vote, verified_purchase)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (
                     asin,
